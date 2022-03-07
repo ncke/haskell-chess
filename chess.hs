@@ -25,15 +25,30 @@ location (Rook _ square) = square
 location (Bishop _ square) = square
 location (Knight _ square) = square
 
+owner :: Piece -> Player
+owner (Pawn player _ _) = player
+owner (King player _ _) = player
+owner (Queen player _) = player
+owner (Rook player _) = player
+owner (Bishop player _) = player
+owner (Knight player _) = player
+
+occupant :: Board -> Square -> Maybe Player
+occupant board square =
+  let ps = filter (\ piece -> (location piece) == square) board in
+  case ps of
+    [] -> Nothing
+    _  -> Just (owner (head ps))
+
 remove :: Board -> [Square] -> Board
 remove board squares =
-  filter (\ piece -> (location piece) elem squares) board
+  filter (\ piece -> elem (location piece) squares) board
 
-isTwoStep :: Square -> Square -> Bool
-isTwoStep (_, yorig) (_, ydest) = abs(ydest - yorig) == 2
+isDoubleStep :: Square -> Square -> Bool
+isDoubleStep (_, yorig) (_, ydest) = abs(ydest - yorig) == 2
 
 reposition :: Piece -> Square -> Piece
-reposition (Pawn player orig flag) square = Pawn player square (isTwoStep orig square) 
+reposition (Pawn player orig flag) square = Pawn player square (isDoubleStep orig square) 
 reposition (King player _ _) square = King player square True
 reposition (Queen player _) square = Queen player square
 reposition (Rook player _) square = Rook player square
@@ -43,6 +58,8 @@ reposition (Knight player _) square = Knight player square
 move :: Board -> Piece -> Square -> Board
 move board piece square =
   (reposition piece square) : remove board [location piece, square]
+
+
 
 -- Players
 
