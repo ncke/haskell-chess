@@ -10,20 +10,22 @@ type Piece = (PieceType, Player, Square, Bool)
 
 type Board = [Piece]
 
--- Chess board manipulation.
+-- Squares.
 
-location :: Piece -> Square
-location (_, _, square, _) = square
-
-owner :: Piece -> Player
-owner (_, player, _, _) = player
-
-occupant :: Board -> Square -> Maybe Player
+occupant :: Board -> Square -> Maybe Piece
 occupant board square =
   let ps = filter (\ piece -> (location piece) == square) board in
   case ps of
     [] -> Nothing
-    _  -> Just (owner (head ps))
+    _  -> Just (head ps)
+
+isLegal :: Square -> Bool
+isLegal (x, y) = x >= 0 && y >= 0 && x <= 7 && y <= 7
+
+-- Chess board manipulation.
+
+location :: Piece -> Square
+location (_, _, square, _) = square
 
 remove :: Board -> [Square] -> Board
 remove board squares =
@@ -43,15 +45,38 @@ move :: Board -> Piece -> Square -> Board
 move board piece square =
   (reposition piece square) : remove board [location piece, square]
 
+-- Players.
 
-
--- Players
+owner :: Piece -> Player
+owner (_, player, _, _) = player
 
 opponent :: Player -> Player
 opponent White = Black
 opponent Black = White
 
+pieces :: Board -> Player -> [Piece]
+pieces board player =
+  filter (\ piece -> (owner piece) == player) board
 
+-- Move generation.
+
+ray :: Board -> Player -> Square -> Int -> Int -> [Square]
+ray board player (x, y) dx dy =
+  let sq = (x + dx, y + dy) in
+  if not(isLegal sq) then []
+  else case occupant board sq of
+    Nothing -> sq : ray board player sq dx dy
+    Just piece -> if owner(piece) == player then [] 
+                  else if owner piece == opponent player then [sq] 
+                  else sq : ray board player sq dx dy
+
+pieceMoves :: Board -> Piece -> [Board]
+pieceMoves board piece =
+  []
+
+moves :: Board -> Player -> [Board]
+moves board player =
+  concat (map (pieceMoves board) (pieces board player))
 
 -- Mate in one is available.
 problem1 :: Board
