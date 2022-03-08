@@ -4,34 +4,19 @@ data Player = White | Black deriving (Show, Eq)
 
 type Square = (Int, Int)
 
-data Piece = 
-    Pawn Player Square Bool 
-  | Knight Player Square
-  | Bishop Player Square
-  | Rook Player Square
-  | Queen Player Square
-  | King Player Square Bool
-  deriving (Show, Eq)
+data PieceType = Pawn | Knight | Bishop | Rook | Queen | King deriving (Show, Eq)
+
+type Piece = (PieceType, Player, Square, Bool)
 
 type Board = [Piece]
 
 -- Chess board manipulation.
 
 location :: Piece -> Square
-location (Pawn _ square _) = square
-location (King _ square _) = square
-location (Queen _ square) = square
-location (Rook _ square) = square
-location (Bishop _ square) = square
-location (Knight _ square) = square
+location (_, _, square, _) = square
 
 owner :: Piece -> Player
-owner (Pawn player _ _) = player
-owner (King player _ _) = player
-owner (Queen player _) = player
-owner (Rook player _) = player
-owner (Bishop player _) = player
-owner (Knight player _) = player
+owner (_, player, _, _) = player
 
 occupant :: Board -> Square -> Maybe Player
 occupant board square =
@@ -48,12 +33,11 @@ isDoubleStep :: Square -> Square -> Bool
 isDoubleStep (_, yorig) (_, ydest) = abs(ydest - yorig) == 2
 
 reposition :: Piece -> Square -> Piece
-reposition (Pawn player orig flag) square = Pawn player square (isDoubleStep orig square) 
-reposition (King player _ _) square = King player square True
-reposition (Queen player _) square = Queen player square
-reposition (Rook player _) square = Rook player square
-reposition (Bishop player _) square = Bishop player square
-reposition (Knight player _) square = Knight player square
+reposition piece square =
+  case piece of
+    (Pawn, player, orig, flag) -> (Pawn, player, square, isDoubleStep orig square)
+    (King, player, _, _) -> (King, player, square, True)
+    (pieceType, player, _, _) -> (pieceType, player, square, False)
 
 move :: Board -> Piece -> Square -> Board
 move board piece square =
@@ -72,8 +56,8 @@ opponent Black = White
 -- Mate in one is available.
 problem1 :: Board
 problem1 = [ 
-  King White (2, 7) True,  
-  Queen White (1, 7),
-  Bishop White (4, 0),
-  King Black (0, 3) True ] 
+  (King, White, (2, 7), True),  
+  (Queen, White, (1, 7), False),
+  (Bishop, White, (4, 0), False),
+  (King, Black, (0, 3), True) ] 
 
