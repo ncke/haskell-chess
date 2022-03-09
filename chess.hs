@@ -29,7 +29,7 @@ location (_, _, square, _) = square
 
 remove :: Board -> [Square] -> Board
 remove board squares =
-  filter (\ piece -> elem (location piece) squares) board
+  filter (\ piece -> not (elem (location piece) squares)) board
 
 isDoubleStep :: Square -> Square -> Bool
 isDoubleStep (_, yorig) (_, ydest) = abs(ydest - yorig) == 2
@@ -60,19 +60,22 @@ pieces board player =
 
 -- Move generation.
 
-ray :: Board -> Player -> Square -> Int -> Int -> [Square]
-ray board player (x, y) dx dy =
+ray :: Board -> Player -> Square -> (Int, Int) -> [Square]
+ray board player (x, y) (dx, dy) =
   let sq = (x + dx, y + dy) in
   if not(isLegal sq) then []
   else case occupant board sq of
-    Nothing -> sq : ray board player sq dx dy
+    Nothing -> sq : ray board player sq (dx, dy)
     Just piece -> if owner(piece) == player then [] 
                   else if owner piece == opponent player then [sq] 
-                  else sq : ray board player sq dx dy
+                  else sq : ray board player sq (dx, dy)
+
+bishopMoves :: Board -> Player -> Square -> [Square]
+bishopMoves board player square =
+  concat (map (ray board player square) [(1, 1), (-1, 1), (-1, -1), (1, -1)])
 
 pieceMoves :: Board -> Piece -> [Board]
-pieceMoves board piece =
-  []
+pieceMoves board (Bishop, player, square, flag) = map (move board (Bishop, player, square, flag)) (bishopMoves board player square)
 
 moves :: Board -> Player -> [Board]
 moves board player =
