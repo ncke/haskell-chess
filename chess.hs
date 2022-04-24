@@ -70,9 +70,28 @@ ray board player (x, y) (dx, dy) =
                   else if owner piece == opponent player then [sq] 
                   else sq : ray board player sq (dx, dy)
 
+knightVectors = [(1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1), (-1, 2)]
+
+knightMoves :: Board -> Player -> Square -> [Square]
+knightMoves board player (x, y) =
+  filter isLegal
+  (map (\ (dx, dy) -> (x + dx, y + dy)) knightVectors)
+
+diagonalRays = [(1, 1), (-1, 1), (-1, -1), (1, -1)]
+
 bishopMoves :: Board -> Player -> Square -> [Square]
 bishopMoves board player square =
-  concat (map (ray board player square) [(1, 1), (-1, 1), (-1, -1), (1, -1)])
+  concat (map (ray board player square) diagonalRays)
+
+perpendicularRays = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+
+rookMoves :: Board -> Player -> Square -> [Square]
+rookMoves board player square =
+  concat (map (ray board player square) perpendicularRays)
+
+queenMoves :: Board -> Player -> Square -> [Square]
+queenMoves board player square =
+  concat (map (ray board player square) (concat [perpendicularRays, diagonalRays]))
 
 pieceMoves :: Board -> Piece -> [Board]
 pieceMoves board (Bishop, player, square, flag) = map (move board (Bishop, player, square, flag)) (bishopMoves board player square)
