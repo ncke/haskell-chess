@@ -21,9 +21,9 @@ pattern kind =
   case kind of
     Knight -> (False, knightSteps)
     Bishop -> (True, diagonalSteps)
-    Rook -> (True, parallelSteps)
-    Queen -> (True, parallelSteps ++ diagonalSteps)
-    King -> (False, parallelSteps ++ diagonalSteps)
+    Rook   -> (True, parallelSteps)
+    Queen  -> (True, parallelSteps ++ diagonalSteps)
+    King   -> (False, parallelSteps ++ diagonalSteps)
 
 parallelSteps :: [Step]
 parallelSteps = [ (1,0), (-1,0), (0,1), (0,-1) ]

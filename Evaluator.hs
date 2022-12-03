@@ -12,13 +12,15 @@ playersScore :: Game -> Player -> Double
 playersScore game player = piecesValue'
   where
     board' = Game.board game
-    pieces' = Game.pieces game player
+    pieces' = Board.pieces board' player
     piecesValue' = foldr (+) 0 (map pieceValue pieces') 
-
-
 
 pieceValue :: Piece -> Double
 pieceValue piece =
   case Piece.kind piece of
     Pawn -> 1.0
-
+    Knight -> 3.0
+    Bishop -> 3.0
+    Rook -> 5.0
+    Queen -> 9.0
+    King -> 1000000.0

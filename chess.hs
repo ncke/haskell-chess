@@ -5,6 +5,7 @@ import Piece
 import MoveGenerator
 import Player
 import Game
+import Display
 
 board1 :: Board
 board1 = [(King, White, (3, 0)), (Queen, Black, (4,1))]
@@ -19,4 +20,5 @@ game2 :: Game
 game2 = (board2, Black)
 
 main :: IO ()
-main = print("hello")
+main = do
+  putStrLn(asString board1 White)
