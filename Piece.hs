@@ -13,19 +13,10 @@ import Position
 
 data PieceKind = Pawn | Knight | Bishop | Rook | Queen | King deriving (Show, Eq)
 
-type Piece = (PieceKind, Player, Position)
-
--- returns the kind of the piece
-kind :: Piece -> PieceKind
-kind (kind, player, posn) = kind
-
--- returns the player that owns the piece
-player :: Piece -> Player
-player (kind, player, posn) = player
-
--- returns the position at which the piece is located
-position :: Piece -> Position
-position (kind, player, posn) = posn
+data Piece = Piece { kind :: PieceKind
+                   , player :: Player
+                   , position :: Position
+                   } deriving (Show)
 
 -- returns true iff the piece is at the position
 isAt :: Piece -> Position -> Bool

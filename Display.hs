@@ -9,31 +9,28 @@ import Position
 
 asString :: Board -> Player -> String
 asString board player =
-  concatMap (line board player) rows'
-  ++ postfix player
-  ++ newline
+  concatMap (line board player) rows' ++ post' ++ newline
   where
     rows' = if player == Black then [0..7] else reverse [0..7]
---pref' ++ concatMap (\col -> (repn' row col)) cols' ++ etcs'
+    post' = if player == White then ['a'..'h'] else reverse ['a'..'h']
+
 line :: Board -> Player -> Int -> String
 line board player row =
     pref' ++ concatMap (repn' row) cols' ++ etcs'
   where
-    pref' = prefix row
+    pref' = show (row + 1)
     occu' r c = Board.occupant board (r, c)
-    repn' r c = ctrl (occu' r c)  (r, c) ++ pc board (r, c)
+    repn' r c = ctrl (occu' r c)  (r, c) ++ square board (r, c)
     cols' = if player == White then [0..7] else reverse [0..7]
     etcs' = reset ++ newline
 
-prefix :: Int -> String
-prefix row = show (row + 1)
-
-letters :: String
-letters = "abcdefgh"
-
-postfix :: Player -> String
-postfix White = " " ++ letters
-postfix Black = " " ++ reverse letters
+square :: Board -> Position -> String
+square board posn =
+  case piece' of
+    Just p -> pieceString p
+    Nothing -> " "
+  where
+    piece' = Board.occupant board posn
 
 ctrl :: Maybe Piece -> Position -> String
 ctrl piece posn = "\27[" ++ str ++ ";" ++ (bg posn) ++ "m"
@@ -46,25 +43,11 @@ reset :: String
 reset = "\27[0m"
 
 bg :: Position -> String
-bg (row, col) =
-  case mod (row + col) 2 of
-    0 -> "44" -- Black
-    1 -> "41" -- White
+bg (row, col) = if mod (row + col) 2 == 0 then "44" else "41"
 
 fg :: Player -> String
-fg White = "37"
-fg Black = "30"
-
-pc :: Board -> Position -> String
-pc board posn =
-  case piece' of
-    Just p -> pieceString p
-    Nothing -> " "
-  where
-    piece' = Board.occupant board posn
-
-newline :: String
-newline = "\n"
+fg White = "37" -- white fg
+fg Black = "30" -- black fg
 
 pieceString :: Piece -> String
 pieceString piece =
@@ -81,3 +64,6 @@ pieceString piece =
     (White, Bishop) -> "\9821"
     (White, Knight) -> "\9822"
     (White, Pawn)   -> "\9823"
+
+newline :: String
+newline = "\n"
