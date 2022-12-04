@@ -1,21 +1,29 @@
 module Game
-( Game(..)
+( Game
 , turn
 , board
 , Game.move
+, Game.create
 ) where
 
 import Board
 import Piece
 import Player
 
-type Game = (Board, Player)
+data Game = Game { board :: Board
+                 , turn :: Player
+                 } deriving (Show)
 
-turn :: Game -> Player
-turn (board, player) = player
-
-board :: Game -> Board
-board (board, player) = board
-
+-- returns a game after a move has been played to the given board
 move :: Game -> Board -> Game
-move (old, player) board = (board, opponent player)
+move game board =
+  Game { board = board
+       , turn = opponent (turn game)
+       }
+
+-- create a game
+create :: Board -> Player -> Game
+create board player =
+  Game { board = board
+       , turn = player
+       }

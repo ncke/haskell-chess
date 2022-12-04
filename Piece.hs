@@ -36,11 +36,7 @@ isAts piece posns =
 
 -- returns a piece that is repositioned to the given position
 reposition :: Piece -> Position -> Piece
-reposition piece posn = 
-  Piece { kind = kind piece
-        , player = player piece
-        , position = posn 
-        }
+reposition piece posn = create (kind piece) (player piece) posn
 
 -- create a piece
 create :: PieceKind -> Player -> Position -> Piece
