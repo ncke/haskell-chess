@@ -6,12 +6,15 @@ module Piece
 , position
 , isAt
 , isAts
+, reposition
+, create
 ) where
 
 import Player
 import Position
 
-data PieceKind = Pawn | Knight | Bishop | Rook | Queen | King deriving (Show, Eq)
+data PieceKind = 
+  Pawn | Knight | Bishop | Rook | Queen | King deriving (Show, Eq)
 
 data Piece = Piece { kind :: PieceKind
                    , player :: Player
@@ -30,3 +33,19 @@ isAts piece posns =
     (posn : posns) -> if posn == posn' then True else isAts piece posns
   where
     posn' = position piece
+
+-- returns a piece that is repositioned to the given position
+reposition :: Piece -> Position -> Piece
+reposition piece posn = 
+  Piece { kind = kind piece
+        , player = player piece
+        , position = posn 
+        }
+
+-- create a piece
+create :: PieceKind -> Player -> Position -> Piece
+create kind player posn =
+  Piece { kind = kind
+        , player = player
+        , position = posn
+        }

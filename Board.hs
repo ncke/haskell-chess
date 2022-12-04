@@ -13,10 +13,6 @@ import Player
 
 type Board = [Piece]
 
--- update a piece's position
-reposition :: Piece -> Position -> Piece
-reposition (piece, player, posn) newPosn = (piece, player, newPosn)
-
 -- find the piece occupying a given position (if any)
 occupant :: Board -> Position -> Maybe Piece
 occupant board posn =
@@ -26,11 +22,11 @@ occupant board posn =
 
 -- remove any piece at the given position
 remove :: Board -> Position -> Board
-remove board posn = filter (\piece -> not (Piece.isAt piece posn)) board
+remove board posn = filter (\piece -> not (isAt piece posn)) board
 
 -- remove any piece at the given positions
 removes :: Board -> [Position] -> Board
-removes board posns = filter (\piece -> not (Piece.isAts piece posns)) board
+removes board posns = filter (\piece -> not (isAts piece posns)) board
 
 -- move a piece to a new position and remove any captured piece
 move :: Board -> Position -> Position -> Board

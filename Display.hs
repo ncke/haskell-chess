@@ -12,7 +12,7 @@ asString board player =
   concatMap (line board player) rows' ++ post' ++ newline
   where
     rows' = if player == Black then [0..7] else reverse [0..7]
-    post' = if player == White then ['a'..'h'] else reverse ['a'..'h']
+    post' = " " ++ if player == White then ['a'..'h'] else reverse ['a'..'h']
 
 line :: Board -> Player -> Int -> String
 line board player row =
