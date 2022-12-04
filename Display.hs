@@ -14,24 +14,26 @@ asString board player =
   ++ newline
   where
     rows' = if player == Black then [0..7] else reverse [0..7]
-
+--pref' ++ concatMap (\col -> (repn' row col)) cols' ++ etcs'
 line :: Board -> Player -> Int -> String
 line board player row =
-    prefix row
-    ++ concatMap (\col -> (repn' row col)) cols'
-    ++ reset
-    ++ newline
+    pref' ++ concatMap (repn' row) cols' ++ etcs'
   where
+    pref' = prefix row
     occu' r c = Board.occupant board (r, c)
     repn' r c = ctrl (occu' r c)  (r, c) ++ pc board (r, c)
-    cols' = if player == White then [0..7] else reverse [0..7] 
+    cols' = if player == White then [0..7] else reverse [0..7]
+    etcs' = reset ++ newline
 
 prefix :: Int -> String
 prefix row = show (row + 1)
 
+letters :: String
+letters = "abcdefgh"
+
 postfix :: Player -> String
-postfix White = " abcdefgh"
-postfix Black = " hgfedcba"
+postfix White = " " ++ letters
+postfix Black = " " ++ reverse letters
 
 ctrl :: Maybe Piece -> Position -> String
 ctrl piece posn = "\27[" ++ str ++ ";" ++ (bg posn) ++ "m"
