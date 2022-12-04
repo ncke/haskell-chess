@@ -4,7 +4,7 @@ module MoveGenerator
 
 import Board
 import Game
-import Pattern
+import MovePattern
 import Piece
 import Player
 import Position
@@ -30,11 +30,11 @@ generatePieceMoves :: Game -> Piece -> [Position]
 generatePieceMoves game piece =
   case kind' of
     Pawn -> []
-    other -> generatePatternedPieceMoves game piece (pattern kind')
+    other -> generatePatternedPieceMoves game piece (movePattern kind')
   where
     kind' = Piece.kind piece
 
-generatePatternedPieceMoves :: Game -> Piece -> Pattern -> [Position]
+generatePatternedPieceMoves :: Game -> Piece -> MovePattern -> [Position]
 generatePatternedPieceMoves game piece pattern =
   applySteps board' piece' posn' pattern
   where 
@@ -51,9 +51,9 @@ applyStep board player posn recurse step =
       else next : applyStep board player next recurse step
     Nothing -> []
 
-applySteps :: Board -> Player -> Position -> Pattern -> [Position]
+applySteps :: Board -> Player -> Position -> MovePattern -> [Position]
 applySteps board player posn pattern =
   concatMap (applyStep board player posn recurses') steps'
   where
-    recurses' = Pattern.recurses pattern
-    steps' = Pattern.steps pattern
+    recurses' = MovePattern.recurses pattern
+    steps' = MovePattern.steps pattern
