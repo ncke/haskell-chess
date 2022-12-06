@@ -3,6 +3,7 @@ module Position
 , Step(..)
 , isLegal
 , increment
+, inside
 ) where
 
 type Position = (Int, Int)
@@ -26,3 +27,12 @@ increment (px, py) (dx, dy) =
     False -> Nothing
   where incremented = (px + dx, py + dy)
 
+-- determine whether a position is inside a bounding box
+inside :: Position -> Position -> Position -> Bool
+inside (ax, ay) (bx, by) (px, py)  =
+  px >= llx && px <= urx && py >= lly && py <= ury
+  where
+    llx = min ax bx -- lower left x
+    lly = min ay by -- lower left y
+    urx = max ax bx -- upper right x
+    ury = max ay by -- upper right y 

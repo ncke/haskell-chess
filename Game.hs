@@ -1,29 +1,33 @@
 module Game
 ( Game
 , turn
+, player
 , board
 , Game.move
 , Game.create
 ) where
 
 import Board
-import Piece
 import Player
 
 data Game = Game { board :: Board
-                 , turn :: Player
+                 , player :: Player
                  } deriving (Show)
 
 -- returns a game after a move has been played to the given board
-move :: Game -> Board -> Game
-move game board =
+move :: Game -> Player -> Board -> Game
+move game player board =
   Game { board = board
-       , turn = opponent (turn game)
+       , player = player
        }
 
 -- create a game
 create :: Board -> Player -> Game
 create board player =
   Game { board = board
-       , turn = player
+       , player = player
        }
+
+-- the player next to move
+turn :: Game -> Player
+turn game = opponent (player game)

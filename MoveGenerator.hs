@@ -11,7 +11,7 @@ import Position
 
 generateGames :: Game -> [Game]
 generateGames game = 
-  map (Game.move game) boards'
+  map (Game.move game turn') boards'
   where 
     board' = Game.board game
     turn' = Game.turn game
