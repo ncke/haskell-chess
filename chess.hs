@@ -28,8 +28,9 @@ play game =
   game
 
 populate :: Int -> Game -> Tree Evaluation
-populate 1 game = Tree.Node (evaluate game) []
-populate depth game = Tree.Node (evaluate game) subtree
+populate depth game =
+  | depth == 1 = Tree.Node (evaluate game) []
+  | otherwise = Tree.Node (evaluate game) subtree
   where subtree = map (populate (depth - 1)) (generateGames game)
 
 --search :: Player -> Tree Evaluation -> Game

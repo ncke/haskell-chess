@@ -18,8 +18,8 @@ data Evaluation = Evaluation
 
 evaluate :: Game -> Evaluation
 evaluate game =
-  Evaluation { game = game, score = score }
-  where score = playersScore game White - playersScore game Black
+  Evaluation { game = game, score = score' }
+  where score' = playersScore game White - playersScore game Black
 
 playersScore :: Game -> Player -> Double
 playersScore game player = value' + bishops' + central'
@@ -45,8 +45,8 @@ twoBishops pieces = if length bishops == 2 then 0.5 else 0.0
   where bishops = filter (Bishop ==) (map kind pieces)
 
 centrality :: [Piece] -> Double
-centrality pieces = 0.15 * fromIntegral centre + 0.05 * fromIntegral surround
+centrality pieces = 0.15 * fromIntegral centre' + 0.05 * fromIntegral surround'
   where
-    posns = map position pieces
-    centre = length (filter (inside (4,4) (5,5)) posns)
-    surround = length (filter (inside (3,3) (6,6)) posns) - centre
+    posns' = map position pieces
+    centre' = length (filter (inside (4,4) (5,5)) posns')
+    surround' = length (filter (inside (3,3) (6,6)) posns') - centre'
