@@ -27,11 +27,44 @@ play :: Game -> Game
 play game =
   game
 
-populate :: Int -> Game -> Tree Evaluation
-populate depth game =
-  | depth == 1 = Tree.Node (evaluate game) []
-  | otherwise = Tree.Node (evaluate game) subtree
-  where subtree = map (populate (depth - 1)) (generateGames game)
+
+best :: Player -> [Game] -> Game
+best player games =
+  where
+    evals' = map evaluate games
+
+search :: Int -> Player -> [Game] -> Game
+search depth player games
+  | depth == 1   = best evals'
+  | otherwise    = search (depth - 1) next'
+  where
+    evals' = map evaluate games
+    best' = max (map score) evals'
+    next' = map generateGames games
+
+
+
+alphabeta :: Bool -> (Double, Double) -> Double -> (Double, Double)
+alphabeta isMax (alpha, beta) score
+  | isMax = (max alpha score, beta)
+  | otherwise = (alpha, min beta score)
+
+
+populate2 :: Int -> Player -> (Double, Double) -> Game -> (Double, Double) -> Tree Evaluation
+populate2 depth maxPlayer ab game
+  | depth == 1   = Tree.Node (eval') []
+  | otherwise    = Tree.Node (eval') subtree'
+  where
+    
+    eval' = evaluate game
+    score' = score eval'
+    ab' = alphabeta (Game.player game == maxPlayer) ab
+    games' = generateGames game
+    subtree' = map (populate2 (depth - 1)) games'
+
+
+
+
 
 --search :: Player -> Tree Evaluation -> Game
 --search player root =
